@@ -1,0 +1,10 @@
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\bin\Debug\vrtx-keys.exe.config
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\bin\Debug\vrtx-keys.exe
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\bin\Debug\vrtx-keys.pdb
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx-keys.csprojAssemblyReference.cache
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx_keys.HomeForm.resources
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx_keys.Properties.Resources.resources
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx-keys.csproj.GenerateResource.cache
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx-keys.csproj.CoreCompileInputs.cache
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx-keys.exe
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\vrtx-keys\obj\Debug\vrtx-keys.pdb

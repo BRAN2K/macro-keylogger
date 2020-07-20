@@ -1,0 +1,14 @@
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\bin\Debug\keylogger.exe.config
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\bin\Debug\keylogger.exe
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\bin\Debug\keylogger.pdb
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.csproj.CoreCompileInputs.cache
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.exe
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.pdb
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.csprojAssemblyReference.cache
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\bin\Debug\keylogger.exe.config
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\bin\Debug\keylogger.exe
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\bin\Debug\keylogger.pdb
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.csprojAssemblyReference.cache
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.csproj.CoreCompileInputs.cache
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.exe
+C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.pdb
