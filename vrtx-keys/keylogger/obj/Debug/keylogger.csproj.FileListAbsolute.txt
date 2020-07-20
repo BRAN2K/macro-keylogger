@@ -12,3 +12,6 @@ C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogg
 C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.csproj.CoreCompileInputs.cache
 C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.exe
 C:\Users\lucca\Desktop\yLLumi\Projetos\vrtx-kl\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.pdb
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\bin\Debug\FluentFTP.dll
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\bin\Debug\FluentFTP.xml
+C:\Users\gui-s\source\repos\macro-keylogger\vrtx-keys\keylogger\obj\Debug\keylogger.csproj.CopyComplete
