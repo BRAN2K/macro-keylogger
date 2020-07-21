@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="keylogger.exe" size="24544">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="keylogger.exe" size="25056">
       <assemblyIdentity name="keylogger" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>r13Z+f8zQx+6nMk3vJVnbrTUIHwR0mlztym6SxDFC3g=</dsig:DigestValue>
+        <dsig:DigestValue>FMA8Zds8TY5DJf9/FaIg7Ukcgm25GLtemo5qaCuQ5bw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
