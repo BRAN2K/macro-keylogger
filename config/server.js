@@ -13,6 +13,9 @@ var expressValidator = require('express-validator');
 /* importar o módulo do express-session */
 var expressSession = require('express-session');
 
+/* importar o módulo do cors */
+var cors = require('cors');
+
 /* iniciar o objeto do express */
 var app = express();
 
@@ -28,6 +31,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 /* configurar o middleware express-validator */
 app.use(expressValidator());
+
+/* configurar o middleware cors */
+app.use(cors());
 
 /* configurar o middleware express-validator */
 app.use(expressSession({
