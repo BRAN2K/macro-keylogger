@@ -43,10 +43,10 @@ app.use(expressSession({
 }));
 
 /* efetua o autoload das rotas, dos models e dos controllers para o objeto app */
-consign()
-	.include('app/routes')
-	.then('app/models')
-	.then('app/controllers')
+/* para uso local, retirar o {cwd...} e adicionar app/ nos items */
+consign({cwd: process.cwd()+"/app"})
+	.include('routes')
+	.then('controllers')
 	.into(app);
 
 /* exportar o objeto app */
