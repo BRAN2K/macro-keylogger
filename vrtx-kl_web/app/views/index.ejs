@@ -30,18 +30,16 @@
       <table id="tableData" class="table table-striped table-bordered table-dark table-hover mt-5">
         <thead>
           <tr>
-            <th scope="col">MAC</th>
-            <th scope="col">Username</th>
+            <th scope="col">MAC Address</th>
+            <th scope="col">Computer Name</th>
           </tr>
         </thead>
         <tbody id="tbodyData">
           <%for(dir of dirlist) {%>
-            <%if(dir.name != '..' && dir.name != '.') {%>
-                <tr class="macElement" data-href="user/<%=dir.name%>">
-                    <th scope="row"><%=dir.name%></th>
-                    <td>user204</td>
-                </tr>
-            <%}%>
+              <tr class="macElement" data-href="user/<%=dir.userdir%>">
+                  <th scope="row"><%=dir.mac%></th>
+                  <td><%=dir.computer%></td>
+              </tr>
           <%}%>
         </tbody>
       </table>

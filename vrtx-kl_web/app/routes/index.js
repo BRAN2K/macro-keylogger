@@ -6,22 +6,33 @@ var fs = require('fs');
 module.exports = function(application){
 	application.get('/index', async function(req, res) {
 		if(auth.isLogged(req)){
-			var dirlist = await ftp.listDir();
+			var dir = await ftp.listDir();
+			var dirlist = []
+			for(d of dir) {
+				if(d.name != '..' && d.name != '.') {
+					dirlist.push({
+						'userdir': d.name,
+						'mac': d.name.split('_')[0],
+						'computer': d.name.split('_')[1],
+						'type': d.type
+					})
+				}
+			}
 			res.render('../views/index', { dirlist });
 		}
 		else 
 			res.redirect('/');
 	});
 
-	application.get('/user/:MAC_ADDRESS', async function(req, res) {
+	application.get('/user/:USER_DIR', async function(req, res) {
 		if(auth.isLogged(req)) {
-			var mac = req.params.MAC_ADDRESS;
-			var sys = await ftp.getSysFile(mac);
-			var loglist = await ftp.getLogList(mac);
+			var userdir = req.params.USER_DIR;
+			var sys = await ftp.getSysFile(userdir);
+			var loglist = await ftp.getLogList(userdir);
 			var log = [];
 
 			for(l of loglist) {
-				if(l.name != '..' && l.name != '.' && l.name != 'syslog'){
+				if(l.name != '..' && l.name != '.' && l.type == '-'){
 					log.push({
 						'id': l.name.split('#')[0],
 						'name': l.name,
@@ -30,8 +41,12 @@ module.exports = function(application){
 				}
 			}
 			log = log.sort(compareId);
-
-			res.render('../views/userinfo', {mac, sys, log});
+			
+			var information = {
+				'userdir': userdir,
+				'mac': userdir.split('_')[0]
+			}
+			res.render('../views/userinfo', {information, sys, log});
 		}	
 		else 
 			res.redirect('/');
@@ -40,9 +55,9 @@ module.exports = function(application){
 	application.post('/download', async function(req, res) {
 		if(auth.isLogged(req)) {
 			if(req.body.filename == 'sys_data_capture.log')
-				await ftp.getFile('htdocs/loggers/' + req.body.mac_address + '/syslog/', req.body.filename);
+				await ftp.getFile('htdocs/loggers/' + req.body.userdir + '/syslog/', req.body.filename);
 			else if(!fs.existsSync('temp/' + req.body.filename))
-				await ftp.getFile('htdocs/loggers/' + req.body.mac_address + '/', req.body.filename);
+				await ftp.getFile('htdocs/loggers/' + req.body.userdir + '/', req.body.filename);
 			
 			res.download('temp/' + req.body.filename);
 		}

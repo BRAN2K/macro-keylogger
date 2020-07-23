@@ -29,8 +29,7 @@
     <main role="main" class="container">
       <div class="container text-center mt-5"> 
 
-        <!-- input -->
-        <h1 class="user-select-none" id="userMacAdreess"> <%=mac%> </h1> 
+        <h1 class="user-select-none" id="userMacAdreess"> <%=information.mac%> </h1> 
 
         <div class="accordion mt-4 bg-dark" id="userAccordion">
           <div class="card border-info">
@@ -46,7 +45,7 @@
                     <%if(item.type == '-') {%>
                       <form action="/download" method="POST" target="_blank">
                         <input type="hidden" name="filename" value="<%=item.name%>">
-                        <input type="hidden" name="mac_address" value="<%=mac%>">
+                        <input type="hidden" name="userdir" value="<%=information.userdir%>">
 
                         <div class="row rounded mb-2 py-2" style="background-color: #31373C;">
                           <div class="col-11">
@@ -82,7 +81,7 @@
                     <%if(item.type == '-') {%>
                       <form action="/download" method="POST" target="_blank">
                         <input type="hidden" name="filename" value="<%=item.name%>">
-                        <input type="hidden" name="mac_address" value="<%=mac%>">
+                        <input type="hidden" name="userdir" value="<%=information.userdir%>">
 
                         <div class="row rounded mb-2 py-2" style="background-color: #31373C;">
                           <div class="col-11">

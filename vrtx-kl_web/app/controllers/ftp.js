@@ -9,12 +9,12 @@ module.exports = {
         await getDirList('/htdocs/loggers');
         return dirlist;
     },
-    getSysFile: async(mac) => {
-        await getDirList('htdocs/loggers/' + mac + '/syslog');
+    getSysFile: async(userdir) => {
+        await getDirList('htdocs/loggers/' + userdir + '/syslog');
         return dirlist;
     },
-    getLogList: async(mac) => {
-        await getDirList('htdocs/loggers/' + mac);
+    getLogList: async(userdir) => {
+        await getDirList('htdocs/loggers/' + userdir);
         return dirlist;
     },
     getFile: async(path, filename) => {
