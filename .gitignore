@@ -1,6 +1,9 @@
 #Cache Folder
 .vs/
 
+#web folders
+node_modules
+
 # Prerequisites
 *.d
 
